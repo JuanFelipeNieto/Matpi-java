@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <!-- Header Fragment -->
+    <header class="header" th:fragment="header(activeModule)">
+        <img th:src="@{/img/Logomatpi.png}" alt="Logo Matpi" class="logo">
+
+        <nav class="top-nav">
+            <a sec:authorize="hasRole('ADMINISTRADOR')" th:href="@{/administrador/dashboard}"
+                th:classappend="${activeModule == 'dashboard' ? 'active' : ''}" class="nav-link">🏠 Dashboard</a>
+            <a sec:authorize="hasRole('EMPLEADO')" th:href="@{/empleado/dashboard}"
+                th:classappend="${activeModule == 'dashboard' ? 'active' : ''}" class="nav-link">🏠 Dashboard</a>
+            <a th:href="@{/productos}" th:classappend="${activeModule == 'productos' ? 'active' : ''}"
+                class="nav-link">🍔 Productos</a>
+            <a th:href="@{/pedidos}" th:classappend="${activeModule == 'pedidos' ? 'active' : ''}" class="nav-link">📋
+                Pedidos</a>
+            <a th:href="@{/reservas}" th:classappend="${activeModule == 'reservas' ? 'active' : ''}"
+                class="nav-link">🪑Reservas</a>
+            <a th:href="@{/clientes}" th:classappend="${activeModule == 'clientes' ? 'active' : ''}" class="nav-link">👥
+                Clientes</a>
+            <!-- Show Empleados only for ADMINISTRADOR -->
+            <a sec:authorize="hasRole('ADMINISTRADOR')" th:href="@{/empleados}"
+                th:classappend="${activeModule == 'empleados' ? 'active' : ''}" class="nav-link">🧑‍💼 Empleados</a>
+            <a th:href="@{/proveedores}" th:classappend="${activeModule == 'proveedores' ? 'active' : ''}"
+                class="nav-link">🚚 Proveedores</a>
+            <a th:href="@{/materia-prima}" th:classappend="${activeModule == 'materia-prima' ? 'active' : ''}"
+                class="nav-link">🥬 Materia Prima</a>
+            <a href="#" class="nav-link">💰 Facturas</a>
+        </nav>
+
+        <div class="profile-dropdown">
+            <button class="profile-btn">👤 <span th:text="${rol ?: 'Usuario'}">Usuario</span></button>
+            <div class="dropdown-content">
+                <a th:href="@{/perfil}">Información de perfil</a>
+                <form th:action="@{/auth/logout}" method="post" id="logout-form" style="display: none;">
+                </form>
+                <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    Cerrar sesión
+                </a>
+            </div>
+        </div>
+    </header>
+</body>
+
+</html>

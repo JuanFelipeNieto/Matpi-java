@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes - Matpi</title>
+
+    <link rel="icon" th:href="@{/img/Favicon.png}" />
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/cssDashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/dropdown.css}">
+    <link rel="stylesheet" th:href="@{/css/clientes.css}">
+</head>
+
+<body>
+
+    <div th:replace="fragments/header :: header(${activeModule})"></div>
+
+    <main>
+        <div class="formulario-seccion">
+            <h1>Clientes</h1>
+
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+            <div class="cliente-buscador">
+                <form method="GET" th:action="@{/clientes}" class="form-busqueda">
+                    <input type="text" name="buscar" placeholder="Buscar por documento o nombre" th:value="${buscar}">
+                    <button type="submit" class="btn btn-guardar">Buscar</button>
+                </form>
+            </div>
+
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Documento</th>
+                            <th>Nombre Completo</th>
+                            <th>Teléfono</th>
+                            <th>Última Visita</th>
+                            <th>Total Consumo</th>
+                            <th>Fecha Registro</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="cliente : ${clientes}">
+                            <td th:text="${cliente.id}">1234</td>
+                            <td th:text="${cliente.nombreCompleto}">Nombre</td>
+                            <td th:text="${cliente.telefono != null ? cliente.telefono : 'N/A'}">N/A</td>
+                            <td th:text="${cliente.ultimaVisita != null ? cliente.ultimaVisita : 'N/A'}">N/A</td>
+                            <td th:text="${cliente.totalConsumo}">0</td>
+                            <td th:text="${cliente.fechaRegistro}">2025-01-01</td>
+                            <td class="acciones">
+                                <!-- Acciones aquí -->
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(clientes)}">
+                            <td colspan="7">No hay clientes registrados.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2025 Matpi. Todos los derechos reservados.</p>
+        <ul class="footer-links">
+            <li><a href="#">Política de privacidad</a></li>
+            <li><a href="#">Términos de uso</a></li>
+        </ul>
+    </footer>
+
+</body>
+
+</html>

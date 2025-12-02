@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empleados | Matpi</title>
+
+    <link rel="icon" th:href="@{/img/Favicon.png}" />
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/cssDashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/dropdown.css}">
+    <link rel="stylesheet" th:href="@{/css/empleados.css}">
+</head>
+
+<body>
+
+    <div th:replace="fragments/header :: header(${activeModule})"></div>
+
+    <main>
+        <section class="formulario-seccion">
+            <h1>Empleados</h1>
+
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+            <!-- Contenedor de buscador + botones -->
+            <div class="buscador-nuevo"
+                style="display:flex; justify-content: space-between; align-items:center; margin-bottom:20px; flex-wrap: wrap;">
+                <form th:action="@{/empleados}" method="GET" class="form-busqueda" style="margin:0;">
+                    <input type="text" name="buscar" placeholder="Buscar por ID o Nombre" th:value="${buscar}">
+                    <button type="submit">Buscar</button>
+                </form>
+
+                <div style="display:flex; gap:10px; flex-wrap: wrap; margin-top:5px;">
+                    <a th:href="@{/empleados/create}" class="btn btn-guardar">+ Nuevo Empleado</a>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Correo</th>
+                            <th>Teléfono</th>
+                            <th>EPS</th>
+                            <th>Tipo Contrato</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="empleado : ${empleados}">
+                            <td th:text="${empleado.idUsr}">12345</td>
+                            <td th:text="${empleado.usuario != null ? empleado.usuario.nombreCompleto : 'N/A'}">Nombre
+                            </td>
+                            <td th:text="${empleado.usuario != null ? empleado.usuario.correoElectronico : 'N/A'}">
+                                email@example.com</td>
+                            <td th:text="${empleado.usuario != null ? empleado.usuario.telefono : 'N/A'}">3001234567
+                            </td>
+                            <td th:text="${empleado.eps}">EPS</td>
+                            <td th:text="${empleado.tipoContrato}">Indefinido</td>
+                            <td>
+                                <span th:if="${empleado.usuario != null && empleado.usuario.estado}"
+                                    class="badge badge-success">Activo</span>
+                                <span th:if="${empleado.usuario != null && !empleado.usuario.estado}"
+                                    class="badge badge-danger">Inactivo</span>
+                            </td>
+                            <td class="acciones">
+                                <a th:href="@{/empleados/edit/{id}(id=${empleado.idUsr})}"
+                                    class="btn btn-editar">Editar</a>
+                                <form sec:authorize="hasRole('ADMINISTRADOR')"
+                                    th:action="@{/empleados/delete/{id}(id=${empleado.idUsr})}" method="POST"
+                                    onsubmit="return confirm('¿Seguro que deseas eliminar este empleado?');"
+                                    style="display:inline;">
+                                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(empleados)}">
+                            <td colspan="8" class="text-center">No hay empleados registrados.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 Matpi. Todos los derechos reservados.</p>
+        <ul class="footer-links">
+            <li><a href="#">Política de privacidad</a></li>
+            <li><a href="#">Términos de uso</a></li>
+        </ul>
+    </footer>
+
+</body>
+
+</html>

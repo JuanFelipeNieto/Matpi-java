@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Empleado | Matpi</title>
+
+    <link rel="icon" th:href="@{/img/Favicon.png}" />
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/cssDashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/dropdown.css}">
+    <link rel="stylesheet" th:href="@{/css/empleados.css}">
+</head>
+
+<body>
+
+    <div th:replace="fragments/header :: header('empleados')"></div>
+
+    <main>
+        <section class="formulario-seccion">
+            <h1>Crear Nuevo Empleado</h1>
+
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+            <form th:action="@{/empleados/create}" method="POST">
+                <input type="hidden" name="rol" value="EMPLEADO">
+
+                <h4>Datos del Empleado</h4>
+
+                <!-- ID (Documento) -->
+                <div class="form-group">
+                    <label>ID (Documento)</label>
+                    <input type="text" name="id" class="form-control" required>
+                </div>
+
+                <!-- Nombre Completo -->
+                <div class="form-group">
+                    <label>Nombre Completo</label>
+                    <input type="text" name="nombreCompleto" class="form-control" required>
+                </div>
+
+                <!-- Correo Electrónico -->
+                <div class="form-group">
+                    <label>Correo Electrónico</label>
+                    <input type="email" name="correoElectronico" class="form-control" required>
+                </div>
+
+                <!-- Teléfono -->
+                <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="text" name="telefono" class="form-control" required>
+                </div>
+
+                <!-- Contraseña -->
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <div class="input-group">
+                        <input type="password" id="password" name="password" class="form-control" required>
+                        <button type="button" class="toggle-password"
+                            onclick="togglePassword('password', this)">👁️</button>
+                    </div>
+                </div>
+
+                <!-- Confirmar Contraseña -->
+                <div class="form-group">
+                    <label>Confirmar Contraseña</label>
+                    <div class="input-group">
+                        <input type="password" id="passwordConfirm" name="passwordConfirm" class="form-control">
+                        <button type="button" class="toggle-password"
+                            onclick="togglePassword('passwordConfirm', this)">👁️</button>
+                    </div>
+                </div>
+
+                <!-- Dirección -->
+                <div class="form-group">
+                    <label>Dirección</label>
+                    <input type="text" name="direccion" class="form-control" required>
+                </div>
+
+                <!-- Estado -->
+                <div class="form-group">
+                    <label>Estado</label>
+                    <select name="estado" class="form-control">
+                        <option value="true">Activo</option>
+                        <option value="false">Inactivo</option>
+                    </select>
+                </div>
+
+                <!-- Fecha de Ingreso -->
+                <div class="form-group">
+                    <label>Fecha de Ingreso</label>
+                    <input type="date" name="fechaIngreso" class="form-control"
+                        th:value="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}" readonly>
+                </div>
+
+                <!-- Experiencia Laboral -->
+                <div class="form-group">
+                    <label>Experiencia Laboral</label>
+                    <input type="text" name="experienciaLaboral" class="form-control" required>
+                </div>
+
+                <!-- Fecha de Nacimiento -->
+                <div class="form-group">
+                    <label>Fecha de Nacimiento</label>
+                    <input type="date" name="fechaNacimiento" class="form-control">
+                </div>
+
+                <!-- EPS -->
+                <div class="form-group">
+                    <label>EPS</label>
+                    <select name="eps" class="form-control">
+                        <option value="Nueva EPS">Nueva EPS</option>
+                        <option value="Sanitas">Sanitas</option>
+                        <option value="SURA">SURA</option>
+                        <option value="Salud Total">Salud Total</option>
+                        <option value="Compensar">Compensar</option>
+                        <option value="Famisanar">Famisanar</option>
+                        <option value="Coosalud">Coosalud</option>
+                        <option value="Mutual Ser">Mutual Ser</option>
+                        <option value="SOS">SOS</option>
+                        <option value="Salud Mía">Salud Mía</option>
+                        <option value="Aliansalud">Aliansalud</option>
+                    </select>
+                </div>
+
+                <!-- Tipo de Contrato -->
+                <div class="form-group">
+                    <label>Tipo de Contrato</label>
+                    <select name="tipoContrato" class="form-control">
+                        <option value="Indefinido">Indefinido</option>
+                        <option value="Fijo">Fijo</option>
+                        <option value="Servicios">Servicios</option>
+                        <option value="Temporal">Temporal</option>
+                    </select>
+                </div>
+
+                <!-- Contacto de Emergencia - Nombre -->
+                <div class="form-group">
+                    <label>Contacto de Emergencia - Nombre</label>
+                    <input type="text" name="contactoEmergenciaNombre" class="form-control">
+                </div>
+
+                <!-- Contacto de Emergencia - Parentesco -->
+                <div class="form-group">
+                    <label>Contacto de Emergencia - Parentesco</label>
+                    <input type="text" name="contactoEmergenciaParentesco" class="form-control">
+                </div>
+
+                <!-- Contacto de Emergencia - Número -->
+                <div class="form-group">
+                    <label>Contacto de Emergencia - Número</label>
+                    <input type="text" name="contactoEmergenciaNumero" class="form-control">
+                </div>
+
+                <!-- Fecha de Terminación de Contrato -->
+                <div class="form-group">
+                    <label>Fecha de Terminación de Contrato</label>
+                    <input type="date" name="fechaTerminacionContrato" class="form-control">
+                </div>
+
+                <div class="perfil-actions">
+                    <button type="submit" class="btn btn-guardar">Guardar</button>
+                    <a th:href="@{/empleados}" class="btn btn-cancelar">Cancelar</a>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 Matpi. Todos los derechos reservados.</p>
+        <ul class="footer-links">
+            <li><a href="#">Política de privacidad</a></li>
+            <li><a href="#">Términos de uso</a></li>
+        </ul>
+    </footer>
+
+    <script>
+        function togglePassword(id, btn) {
+            const input = document.getElementById(id);
+            if (input.type === "password") {
+                input.type = "text";
+                btn.textContent = "🙈";
+            } else {
+                input.type = "password";
+                btn.textContent = "👁️";
+            }
+        }
+    </script>
+</body>
+
+</html>

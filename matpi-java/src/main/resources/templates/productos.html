@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos - Matpi</title>
+
+    <link rel="icon" th:href="@{/img/Favicon.png}" />
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/cssDashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/dropdown.css}">
+    <link rel="stylesheet" th:href="@{/css/productos.css}">
+</head>
+
+<body>
+
+    <div th:replace="fragments/header :: header(${activeModule})"></div>
+
+    <main>
+        <div class="formulario-seccion">
+            <h1>Productos</h1>
+
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+            <form method="GET" th:action="@{/productos}" class="form-busqueda">
+                <input type="text" name="search" placeholder="Buscar producto o categoría" th:value="${search}">
+                <button type="submit">Buscar</button>
+            </form>
+
+            <!-- Tabla de productos -->
+            <div class="table-responsive">
+                <table class="custom-table table-productos">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Imagen</th>
+                            <th>Nombre</th>
+                            <th>Categoría</th>
+                            <th>Cantidad Disponible</th>
+                            <th>Valor</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="producto : ${productos}">
+                            <td th:text="${producto.id}">1</td>
+                            <td>
+                                <img th:if="${producto.imagen}" th:src="@{${producto.imagen}}" alt="imagen"
+                                    class="producto-imagen">
+                                <span th:unless="${producto.imagen}">Sin imagen</span>
+                            </td>
+                            <td th:text="${producto.nombreProducto}">Nombre</td>
+                            <td th:text="${producto.categoria}">Categoría</td>
+                            <td th:text="${producto.cantidad}">0</td>
+                            <td th:text="${'$' + #numbers.formatDecimal(producto.valor, 0, 'COMMA', 0, 'POINT')}">$0
+                            </td>
+                            <td class="acciones">
+                                <a th:href="@{/productos/{id}(id=${producto.id})}" class="btn-editar">Ver</a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(productos)}">
+                            <td colspan="7">No se encontraron productos.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2025 Matpi. Todos los derechos reservados.</p>
+        <ul class="footer-links">
+            <li><a href="#">Política de privacidad</a></li>
+            <li><a href="#">Términos de uso</a></li>
+        </ul>
+    </footer>
+
+</body>
+
+</html>
