@@ -14,22 +14,23 @@ public class MateriaPrimaService {
     @Autowired
     private MateriaPrimaRepositorio materiaPrimaRepositorio;
 
+   public materiaprima create (materiaprima){
+    return materiaPrimaRepositorio.save(materiaprima);
+   }
+
     public List<MateriaPrimaDto> getAll() {
-        return materiaPrimaRepositorio.getAll();
+        return materiaPrimaRepositorio.findAll();
     }
 
-    public Optional<MateriaPrimaDto> getMateriaPrima(Long id) {
-        return materiaPrimaRepositorio.getMateriaPrima(id);
+    public Optional<MateriaPrimaDto> findById(Long id) {
+        return materiaPrimaRepositorio.findById(id);
     }
 
     public MateriaPrimaDto save(MateriaPrimaDto materiaPrimaDto) {
         return materiaPrimaRepositorio.save(materiaPrimaDto);
     }
 
-    public boolean delete(Long id) {
-        return getMateriaPrima(id).map(mp -> {
-            materiaPrimaRepositorio.delete(id);
-            return true;
-        }).orElse(false);
+    public void delete(materiaprima){
+        materiaPrimaRepositorio.delete(materiaprima);
     }
 }
