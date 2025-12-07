@@ -19,13 +19,17 @@
 
     <main>
         <div class="formulario-seccion">
-            <h1>Productos</h1>
+            <h1>🍔 Productos</h1>
 
             <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
 
+            <div class="actions-bar">
+                <a th:href="@{/productos/create}" class="btn btn-primary">➕ Agregar Producto</a>
+            </div>
+
             <form method="GET" th:action="@{/productos}" class="form-busqueda">
                 <input type="text" name="search" placeholder="Buscar producto o categoría" th:value="${search}">
-                <button type="submit">Buscar</button>
+                <button type="submit">🔍 Buscar</button>
             </form>
 
             <!-- Tabla de productos -->
@@ -53,10 +57,10 @@
                             <td th:text="${producto.nombreProducto}">Nombre</td>
                             <td th:text="${producto.categoria}">Categoría</td>
                             <td th:text="${producto.cantidad}">0</td>
-                            <td th:text="${'$' + #numbers.formatDecimal(producto.valor, 0, 'COMMA', 0, 'POINT')}">$0
+                            <td th:text="'$' + ${#numbers.formatDecimal(producto.valor, 0, 'COMMA', 0, 'POINT')}">$0
                             </td>
                             <td class="acciones">
-                                <a th:href="@{/productos/{id}(id=${producto.id})}" class="btn-editar">Ver</a>
+                                <a th:href="@{/productos/{id}(id=${producto.id})}" class="btn-editar">👁️ Ver</a>
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(productos)}">
