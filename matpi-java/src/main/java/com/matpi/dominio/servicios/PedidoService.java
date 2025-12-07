@@ -5,6 +5,8 @@ import com.matpi.dominio.repositorio.PedidoRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,5 +33,26 @@ public class PedidoService {
             pedidoRepositorio.delete(id);
             return true;
         }).orElse(false);
+    }
+
+    // Métodos para reportes
+    public List<PedidoDto> getPedidosPorEstado(String estado) {
+        return pedidoRepositorio.getPedidosPorEstado(estado);
+    }
+
+    public List<PedidoDto> getPedidosPorFecha(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
+        return pedidoRepositorio.getPedidosPorFecha(fechaInicio, fechaFin);
+    }
+
+    public List<PedidoDto> getPedidosPorFechaYEstado(LocalDateTime fechaInicio, LocalDateTime fechaFin, String estado) {
+        return pedidoRepositorio.getPedidosPorFechaYEstado(fechaInicio, fechaFin, estado);
+    }
+
+    public Long contarPedidosPorEstado(String estado) {
+        return pedidoRepositorio.contarPedidosPorEstado(estado);
+    }
+
+    public BigDecimal calcularTotalVentas(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
+        return pedidoRepositorio.calcularTotalVentas(fechaInicio, fechaFin);
     }
 }

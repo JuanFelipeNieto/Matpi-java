@@ -7,20 +7,25 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface PedidoProductoMapper {
 
     @Mappings({
+            @Mapping(source = "id", target = "id"),
+            @Mapping(source = "pedido.id", target = "pedidoId"),
             @Mapping(source = "producto.id", target = "productoId"),
-            @Mapping(source = "producto.nombreProducto", target = "nombreProducto"),
             @Mapping(source = "cantidad", target = "cantidad"),
+            @Mapping(source = "producto.nombreProducto", target = "nombreProducto"),
             @Mapping(source = "producto.valor", target = "precioUnitario")
     })
     PedidoProductoDto toPedidoProductoDto(PedidoProductoEntity pedidoProducto);
 
+    List<PedidoProductoDto> toPedidoProductoDtos(List<PedidoProductoEntity> pedidoProductos);
+
     @InheritInverseConfiguration
-    @Mapping(target = "id", ignore = true)
     @Mapping(target = "pedido", ignore = true)
-    @Mapping(target = "producto", ignore = true) // Se debe asignar manualmente
+    @Mapping(target = "producto", ignore = true)
     PedidoProductoEntity toPedidoProductoEntity(PedidoProductoDto pedidoProductoDto);
 }
