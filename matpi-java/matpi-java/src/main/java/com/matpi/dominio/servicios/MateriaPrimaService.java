@@ -31,6 +31,10 @@ public class MateriaPrimaService {
         return materiaPrimaRepositorio.save(materiaPrimaDto);
     }
 
+    public MateriaPrimaDto update(MateriaPrimaDto materiaPrimaDto) {
+        return materiaPrimaRepositorio.save(materiaPrimaDto);
+    }
+
     public void delete(Long id) {
         materiaPrimaRepositorio.delete(id);
     }
