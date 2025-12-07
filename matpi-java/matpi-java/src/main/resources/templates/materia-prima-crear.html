@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Materia Prima - Matpi</title>
+
+    <link rel="icon" th:href="@{/img/Favicon.png}" />
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/cssDashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/dropdown.css}">
+    <link rel="stylesheet" th:href="@{/css/form.css}">
+</head>
+
+<body>
+
+    <div th:replace="fragments/header :: header(${activeModule})"></div>
+
+    <main>
+        <div class="formulario-seccion">
+            <h1>➕ Crear Materia Prima</h1>
+
+            <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+            <form th:action="@{/materia-prima/create}" method="post" class="form-materia">
+                <div class="form-group">
+                    <label for="nombre">Nombre <span class="required">*</span></label>
+                    <input type="text" id="nombre" name="nombre" required placeholder="Ej: Tomate">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cantidadDisponible">Cantidad Disponible <span class="required">*</span></label>
+                        <input type="number" id="cantidadDisponible" name="cantidadDisponible" required min="0" step="0.01" placeholder="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="unidadMedida">Unidad de Medida <span class="required">*</span></label>
+                        <select id="unidadMedida" name="unidadMedida" required>
+                            <option value="">Seleccione...</option>
+                            <option value="kg">Kilogramos (kg)</option>
+                            <option value="g">Gramos (g)</option>
+                            <option value="L">Litros (L)</option>
+                            <option value="mL">Mililitros (mL)</option>
+                            <option value="unidad">Unidades</option>
+                            <option value="caja">Cajas</option>
+                            <option value="paquete">Paquetes</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">💾 Guardar</button>
+                    <a th:href="@{/materia-prima}" class="btn btn-secondary">❌ Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2025 Matpi. Todos los derechos reservados.</p>
+        <ul class="footer-links">
+            <li><a href="#">Política de privacidad</a></li>
+            <li><a href="#">Términos de uso</a></li>
+        </ul>
+    </footer>
+
+</body>
+
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materia Prima - Matpi</title>
+
+    <link rel="icon" th:href="@{/img/Favicon.png}" />
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/cssDashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/dropdown.css}">
+    <link rel="stylesheet" th:href="@{/css/productos.css}">
+</head>
+
+<body>
+
+    <div th:replace="fragments/header :: header(${activeModule})"></div>
+
+    <main>
+        <div class="formulario-seccion">
+            <h1>🥬 Materia Prima</h1>
+
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+            <div class="actions-bar">
+                <a th:href="@{/materia-prima/create}" class="btn btn-primary">➕ Agregar Materia Prima</a>
+            </div>
+
+            <!-- Tabla de materia prima -->
+            <div class="table-responsive">
+                <table class="custom-table table-productos">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Cantidad Disponible</th>
+                            <th>Unidad de Medida</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="materiaPrima : ${materiasPrimas}">
+                            <td th:text="${materiaPrima.id}">1</td>
+                            <td th:text="${materiaPrima.nombre}">Nombre</td>
+                            <td th:text="${materiaPrima.cantidadDisponible}">0</td>
+                            <td th:text="${materiaPrima.unidadMedida}">Unidad</td>
+                            <td class="acciones">
+                                <a th:href="@{/materia-prima/edit/{id}(id=${materiaPrima.id})}" class="btn-editar">✏️ Editar</a>
+                                <form th:action="@{/materia-prima/delete/{id}(id=${materiaPrima.id})}" method="post" style="display: inline;">
+                                    <button type="submit" class="btn-eliminar" onclick="return confirm('¿Estás seguro de eliminar esta materia prima?')">🗑️ Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(materiasPrimas)}">
+                            <td colspan="5">No se encontró materia prima registrada.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2025 Matpi. Todos los derechos reservados.</p>
+        <ul class="footer-links">
+            <li><a href="#">Política de privacidad</a></li>
+            <li><a href="#">Términos de uso</a></li>
+        </ul>
+    </footer>
+
+</body>
+
+</html>
