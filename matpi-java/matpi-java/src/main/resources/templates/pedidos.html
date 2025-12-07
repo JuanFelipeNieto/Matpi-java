@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestión de Pedidos - MATPI</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+    />
+    <style>
+      .badge-pendiente {
+        background-color: #ffc107;
+        color: #000;
+      }
+      .badge-en-preparacion {
+        background-color: #0dcaf0;
+        color: #000;
+      }
+      .badge-entregado {
+        background-color: #28a745;
+        color: #fff;
+      }
+      .badge-pagado {
+        background-color: #17a2b8;
+        color: #fff;
+      }
+      .badge-cancelado {
+        background-color: #dc3545;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header Fragment -->
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <div class="container mt-4">
+      <div class="row mb-4">
+        <div class="col">
+          <h2><i class="bi bi-receipt"></i> Gestión de Pedidos</h2>
+        </div>
+        <div class="col text-end">
+          <a href="/pedidos/create" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Nuevo Pedido
+          </a>
+        </div>
+      </div>
+
+      <!-- Alertas -->
+      <div
+        th:if="${success}"
+        class="alert alert-success alert-dismissible fade show"
+        role="alert"
+      >
+        <i class="bi bi-check-circle"></i> <span th:text="${success}"></span>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+        ></button>
+      </div>
+
+      <div
+        th:if="${error}"
+        class="alert alert-danger alert-dismissible fade show"
+        role="alert"
+      >
+        <i class="bi bi-exclamation-triangle"></i>
+        <span th:text="${error}"></span>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+        ></button>
+      </div>
+
+      <!-- Filtros -->
+      <div class="card mb-3">
+        <div class="card-body">
+          <form action="/pedidos" method="get" class="row g-3">
+            <div class="col-md-3">
+              <label class="form-label">Estado</label>
+              <select name="estado" class="form-select">
+                <option value="">Todos</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="En Preparación">En Preparación</option>
+                <option value="Entregado">Entregado</option>
+                <option value="Pagado">Pagado</option>
+                <option value="Cancelado">Cancelado</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Fecha Desde</label>
+              <input type="date" name="fechaDesde" class="form-control" />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Fecha Hasta</label>
+              <input type="date" name="fechaHasta" class="form-control" />
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+              <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-search"></i> Filtrar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Tabla de Pedidos -->
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead class="table-light">
+                <tr>
+                  <th>ID</th>
+                  <th>Fecha</th>
+                  <th>Mesa</th>
+                  <th>Cliente</th>
+                  <th>Empleado</th>
+                  <th>Valor</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="pedido : ${pedidos}">
+                  <td th:text="${pedido.id}">1</td>
+                  <td
+                    th:text="${#temporals.format(pedido.fecha, 'dd/MM/yyyy HH:mm')}"
+                  >
+                    01/12/2024
+                  </td>
+                  <td th:text="${pedido.mesa != null ? pedido.mesa : '-'}">
+                    Mesa 1
+                  </td>
+                  <td
+                    th:text="${pedido.idCliente != null ? pedido.idCliente : 'Sin cliente'}"
+                  >
+                    Cliente
+                  </td>
+                  <td th:text="${pedido.idEmpleado}">Empleado</td>
+                  <td
+                    th:text="'$' + ${#numbers.formatDecimal(pedido.valor, 0, 'COMMA', 2, 'POINT')}"
+                  >
+                    $50.000
+                  </td>
+                  <td>
+                    <span
+                      class="badge"
+                      th:classappend="${pedido.estado == 'Pendiente' ? 'badge-pendiente' : 
+                                                           pedido.estado == 'En Preparación' ? 'badge-en-preparacion' :
+                                                           pedido.estado == 'Entregado' ? 'badge-entregado' :
+                                                           pedido.estado == 'Pagado' ? 'badge-pagado' : 'badge-cancelado'}"
+                      th:text="${pedido.estado}"
+                    >
+                      Pendiente
+                    </span>
+                  </td>
+                  <td>
+                    <a
+                      th:href="@{/pedidos/{id}(id=${pedido.id})}"
+                      class="btn btn-sm btn-info"
+                      title="Ver detalles"
+                    >
+                      <i class="bi bi-eye"></i>
+                    </a>
+                    <a
+                      th:href="@{/pedidos/edit/{id}(id=${pedido.id})}"
+                      class="btn btn-sm btn-warning"
+                      title="Editar"
+                    >
+                      <i class="bi bi-pencil"></i>
+                    </a>
+                    <form
+                      th:action="@{/pedidos/delete/{id}(id=${pedido.id})}"
+                      method="post"
+                      style="display: inline"
+                    >
+                      <button
+                        type="submit"
+                        class="btn btn-sm btn-danger"
+                        onclick="return confirm('¿Está seguro de eliminar este pedido?')"
+                        title="Eliminar"
+                      >
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(pedidos)}">
+                  <td colspan="8" class="text-center text-muted py-4">
+                    <i class="bi bi-inbox" style="font-size: 2rem"></i>
+                    <p class="mt-2">No hay pedidos registrados</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
