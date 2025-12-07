@@ -22,7 +22,7 @@ public class MateriaPrimaController {
 
     @GetMapping("/{id}")
     public ResponseEntity<MateriaPrimaDto> getMateriaPrima(@PathVariable Long id) {
-        return materiaPrimaService.getMateriaPrima(id)
+        return materiaPrimaService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -34,10 +34,7 @@ public class MateriaPrimaController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        if (materiaPrimaService.delete(id)) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        materiaPrimaService.delete(id);
+        return ResponseEntity.ok().build();
     }
 }

@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Repository
 public class MateriaPrimaRepositorioImpl implements MateriaPrimaRepositorio {
@@ -22,7 +24,10 @@ public class MateriaPrimaRepositorioImpl implements MateriaPrimaRepositorio {
 
     @Override
     public List<MateriaPrimaDto> getAll() {
-        return mapper.toMateriaPrimaDtos(crudMateriaPrima.findAll());
+        List<MateriaPrimaEntity> materiasPrimas = StreamSupport
+                .stream(crudMateriaPrima.findAll().spliterator(), false)
+                .collect(Collectors.toList());
+        return mapper.toMateriaPrimaDtos(materiasPrimas);
     }
 
     @Override
@@ -39,5 +44,15 @@ public class MateriaPrimaRepositorioImpl implements MateriaPrimaRepositorio {
     @Override
     public void delete(Long id) {
         crudMateriaPrima.deleteById(id);
+    }
+
+    @Override
+    public List<MateriaPrimaDto> findAll() {
+        return getAll();
+    }
+
+    @Override
+    public Optional<MateriaPrimaDto> findById(Long id) {
+        return getMateriaPrima(id);
     }
 }
