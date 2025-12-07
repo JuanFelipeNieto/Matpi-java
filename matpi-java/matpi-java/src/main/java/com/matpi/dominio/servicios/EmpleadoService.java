@@ -4,7 +4,6 @@ import com.matpi.dominio.dto.EmpleadoDto;
 import com.matpi.dominio.dto.UsuarioDto;
 import com.matpi.dominio.repositorio.EmpleadoRepositorio;
 import com.matpi.persistencia.crud.CrudEmpleado;
-import com.matpi.persistencia.crud.CrudUsuario;
 import com.matpi.persistencia.entity.EmpleadoEntity;
 import com.matpi.persistencia.entity.UsuarioEntity;
 import com.matpi.persistencia.mapper.EmpleadoMapper;
@@ -27,9 +26,6 @@ public class EmpleadoService {
 
     @Autowired
     private CrudEmpleado crudEmpleado;
-
-    @Autowired
-    private CrudUsuario crudUsuario;
 
     @Autowired
     private PasswordEncoder passwordEncoder;

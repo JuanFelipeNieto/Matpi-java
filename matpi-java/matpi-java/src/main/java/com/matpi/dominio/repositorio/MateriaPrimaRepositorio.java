@@ -12,4 +12,8 @@ public interface MateriaPrimaRepositorio {
     MateriaPrimaDto save(MateriaPrimaDto materiaPrimaDto);
 
     void delete(Long id);
+
+    List<MateriaPrimaDto> findAll();
+
+    Optional<MateriaPrimaDto> findById(Long id);
 }
