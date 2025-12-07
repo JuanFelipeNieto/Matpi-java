@@ -74,30 +74,26 @@ public class PedidoController {
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute PedidoDto pedidoDto,
-            @RequestParam(value = "productos[0].productoId", required = false) Long[] productosIds,
-            @RequestParam(value = "productos[0].cantidad", required = false) Integer[] productosCantidades,
-            Model model) {
+    public String create(@ModelAttribute PedidoDto pedidoDto, Model model) {
         try {
-            // Configurar fecha actual
-            pedidoDto.setFecha(LocalDateTime.now());
-
-            // Procesar productos
-            List<PedidoProductoDto> productos = new ArrayList<>();
-            if (productosIds != null && productosCantidades != null) {
-                for (int i = 0; i < productosIds.length; i++) {
-                    if (productosIds[i] != null && productosCantidades[i] != null) {
-                        PedidoProductoDto productoDto = new PedidoProductoDto();
-                        productoDto.setProductoId(productosIds[i]);
-                        productoDto.setCantidad(productosCantidades[i]);
-                        productos.add(productoDto);
-                    }
-                }
+            // Configurar fecha actual si no viene
+            if (pedidoDto.getFecha() == null) {
+                pedidoDto.setFecha(LocalDateTime.now());
             }
-            pedidoDto.setProductos(productos);
 
             // Calcular valor (esto debería hacerse en el servicio basado en precios reales)
+            // Aquí podríamos iterar sobre los productos para sumar precios si fuera
+            // necesario,
+            // pero idealmente el servicio lo maneja.
             pedidoDto.setValor(BigDecimal.ZERO);
+
+            // Validar que haya productos
+            if (pedidoDto.getProductos() == null || pedidoDto.getProductos().isEmpty()) {
+                throw new RuntimeException("Debe agregar al menos un producto al pedido");
+            }
+
+            // Filtrar productos con IDs nulos (por si acaso el binding crea objetos vacíos)
+            pedidoDto.getProductos().removeIf(p -> p.getProductoId() == null || p.getCantidad() == null);
 
             pedidoService.save(pedidoDto);
             model.addAttribute("success", "Pedido creado exitosamente");
@@ -107,6 +103,9 @@ public class PedidoController {
             model.addAttribute("activeModule", "pedidos");
             model.addAttribute("productos", productoService.getAll());
             model.addAttribute("reservas", reservaService.getAll());
+            // Necesitamos devolver el DTO para no perder los datos del formulario,
+            // pero con cuidado de listas nulas
+            model.addAttribute("pedidoDto", pedidoDto);
             return "pedido-crear";
         }
     }
