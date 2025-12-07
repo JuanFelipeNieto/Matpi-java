@@ -60,13 +60,23 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="idEmpleado">ID Empleado <span class="required">*</span></label>
-                            <input type="text" id="idEmpleado" name="idEmpleado" class="form-control" required>
+                            <label for="idEmpleado">Empleado Asignado <span class="required">*</span></label>
+                            <!-- Campo de solo lectura, se envía al servidor -->
+                            <input type="text" id="idEmpleado" name="idEmpleado" class="form-control" 
+                                   th:value="${currentEmpleadoId}" readonly required style="background-color: #e9ecef;">
+                            <small class="text-muted">Asignado automáticamente al usuario actual</small>
                         </div>
 
                         <div class="form-group">
-                            <label for="idReserva">ID Reserva</label>
-                            <input type="number" id="idReserva" name="idReserva" class="form-control" placeholder="Opcional">
+                            <label for="idReserva">Reserva (Buscar por ID o Cliente)</label>
+                            <input type="text" list="reservasList" id="idReservaInput" class="form-control" placeholder="Escriba para buscar...">
+                            <input type="hidden" id="idReserva" name="idReserva">
+                            <datalist id="reservasList">
+                                <option th:each="reserva : ${reservas}" 
+                                        th:value="${reserva.id}" 
+                                        th:text="${'Reserva #' + reserva.id + ' - Cliente: ' + (reserva.idCliente != null ? reserva.idCliente : 'N/A') + ' - Fecha: ' + #temporals.format(reserva.fechaReserva, 'dd/MM/yyyy HH:mm')}">
+                                </option>
+                            </datalist>
                         </div>
                     </div>
 
@@ -78,12 +88,19 @@
                             <div class="producto-item">
                                 <div class="producto-row">
                                     <div class="form-group">
-                                        <label>Producto ID <span class="required">*</span></label>
-                                        <input type="number" class="form-control producto-id" name="productos[0].productoId" required>
+                                        <label>Seleccionar Producto <span class="required">*</span></label>
+                                        <select class="form-control producto-select" name="productos[0].productoId" required onchange="updateProductInfo(this)">
+                                            <option value="">Seleccione un producto...</option>
+                                            <option th:each="prod : ${productos}" 
+                                                    th:value="${prod.id}" 
+                                                    th:text="${prod.nombreProducto + ' - $' + #numbers.formatDecimal(prod.valor, 0, 'COMMA', 0, 'POINT')}"
+                                                    th:data-price="${prod.valor}">
+                                            </option>
+                                        </select>
                                     </div>
                                     <div class="form-group">
                                         <label>Cantidad <span class="required">*</span></label>
-                                        <input type="number" class="form-control producto-cantidad" name="productos[0].cantidad" min="1" value="1" required>
+                                        <input type="number" class="form-control producto-cantidad" name="productos[0].cantidad" min="1" value="1" required onchange="calculateTotal()">
                                     </div>
                                     <div class="form-group-btn">
                                         <button type="button" class="btn-eliminar remove-producto" disabled>🗑️</button>
@@ -95,8 +112,9 @@
                         <button type="button" class="btn btn-success" id="addProducto">➕ Agregar Producto</button>
 
                         <div class="info-box">
-                            <h4>Valor Total</h4>
-                            <p>El valor total se calculará automáticamente en el servidor</p>
+                            <h4>Valor Total Estimado</h4>
+                            <p id="totalDisplay" style="font-size: 1.5em; font-weight: bold; color: #28a745;">$0</p>
+                            <small class="text-muted">El valor final será calculado y confirmado por el servidor</small>
                         </div>
                     </div>
                 </div>
@@ -156,7 +174,7 @@
 
         .producto-row {
             display: grid;
-            grid-template-columns: 1fr 1fr auto;
+            grid-template-columns: 2fr 1fr auto; /* Adjusted for wider select */
             gap: 10px;
             align-items: end;
         }
@@ -164,6 +182,7 @@
         .form-group-btn {
             display: flex;
             align-items: flex-end;
+            padding-bottom: 2px; /* Alignment adjustment */
         }
 
         .info-box {
@@ -195,6 +214,11 @@
         .btn-success:hover {
             background-color: #218838;
         }
+        
+        .text-muted {
+            color: #6c757d;
+            font-size: 0.85em;
+        }
 
         @media (max-width: 768px) {
             .form-grid {
@@ -214,26 +238,49 @@
     <script>
         let productoIndex = 1;
 
+        // Script para manejar la búsqueda de reservas
+        const reservaInput = document.getElementById('idReservaInput');
+        const reservaHidden = document.getElementById('idReserva');
+
+        reservaInput.addEventListener('input', function() {
+            // Check if val matches an option in the datalist
+            const val = this.value;
+            const opts = document.getElementById('reservasList').childNodes;
+            for (let i = 0; i < opts.length; i++) {
+                if (opts[i].value === val) {
+                   reservaHidden.value = val;
+                   break;
+                }
+            }
+            // If it's a number, assume it's an ID directly typed
+            if(!isNaN(val) && val.trim() !== ''){
+                reservaHidden.value = val;
+            }
+        });
+
+
+        // Script para manejar productos dinámicos
         document.getElementById('addProducto').addEventListener('click', function() {
             const container = document.getElementById('productosContainer');
-            const newProducto = document.createElement('div');
-            newProducto.className = 'producto-item';
-            newProducto.innerHTML = `
-                <div class="producto-row">
-                    <div class="form-group">
-                        <label>Producto ID <span class="required">*</span></label>
-                        <input type="number" class="form-control producto-id" name="productos[${productoIndex}].productoId" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Cantidad <span class="required">*</span></label>
-                        <input type="number" class="form-control producto-cantidad" name="productos[${productoIndex}].cantidad" min="1" value="1" required>
-                    </div>
-                    <div class="form-group-btn">
-                        <button type="button" class="btn-eliminar remove-producto">🗑️</button>
-                    </div>
-                </div>
-            `;
-            container.appendChild(newProducto);
+            // Clone the first item to preserve the options list
+            const firstItem = container.querySelector('.producto-item');
+            const newItem = firstItem.cloneNode(true);
+            
+            // Update names and IDs
+            const select = newItem.querySelector('.producto-select');
+            select.name = `productos[${productoIndex}].productoId`;
+            select.value = ""; // Reset value
+            select.selectedIndex = 0;
+
+            const inputQty = newItem.querySelector('.producto-cantidad');
+            inputQty.name = `productos[${productoIndex}].cantidad`;
+            inputQty.value = 1; // Reset quantity
+
+            // Enable delete button for the new item
+            const btnDelete = newItem.querySelector('.remove-producto');
+            btnDelete.disabled = false;
+
+            container.appendChild(newItem);
             productoIndex++;
             updateRemoveButtons();
         });
@@ -243,6 +290,7 @@
                 if (!e.target.disabled) {
                     e.target.closest('.producto-item').remove();
                     updateRemoveButtons();
+                    calculateTotal();
                 }
             }
         });
@@ -255,6 +303,37 @@
                     btn.disabled = items.length === 1;
                 }
             });
+        }
+        
+        function updateProductInfo(selectElement) {
+            calculateTotal();
+        }
+        
+        function calculateTotal() {
+            let total = 0;
+            const items = document.querySelectorAll('.producto-item');
+            
+            items.forEach(item => {
+                const select = item.querySelector('.producto-select');
+                const quantityInput = item.querySelector('.producto-cantidad');
+                
+                if (select.selectedIndex > 0) {
+                    const option = select.options[select.selectedIndex];
+                    const price = parseFloat(option.getAttribute('data-price')) || 0;
+                    const quantity = parseInt(quantityInput.value) || 0;
+                    
+                    total += price * quantity;
+                }
+            });
+            
+            // Format currency
+            const formatter = new Intl.NumberFormat('es-CO', {
+                style: 'currency',
+                currency: 'COP',
+                minimumFractionDigits: 0
+            });
+            
+            document.getElementById('totalDisplay').textContent = formatter.format(total);
         }
     </script>
 
