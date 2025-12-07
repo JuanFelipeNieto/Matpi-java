@@ -1,36 +1,5 @@
 # Sistema de Gestión MATPI - Módulo de Pedidos y Reportes
 
-## 📋 Descripción
-
-Este proyecto es un sistema integral de gestión para restaurantes desarrollado en **Spring Boot** con vistas **Thymeleaf**. Incluye un completo sistema de gestión de pedidos y generación de reportes estadísticos.
-
-## ✨ Características Implementadas
-
-### 🛒 Gestión de Pedidos (CRUD Completo)
-
-- ✅ **Listar pedidos** con filtros por estado y rango de fechas
-- ✅ **Crear pedidos** con múltiples productos
-- ✅ **Ver detalles** de pedidos individuales
-- ✅ **Editar pedidos** existentes
-- ✅ **Eliminar pedidos**
-- ✅ Estados de pedido: Pendiente, En Preparación, Entregado, Pagado, Cancelado
-
-### 📊 Sistema de Reportes
-
-- ✅ Generación de reportes con filtros personalizables
-- ✅ Estadísticas por estado de pedidos
-- ✅ Totales de ventas y cantidad de pedidos
-- ✅ Gráfico de torta (Chart.js) con distribución por estado
-- ✅ Tabla detallada de pedidos filtrados
-- ✅ Función de impresión de reportes
-
-### 🗄️ Base de Datos Auto-Creada con Hibernate
-
-- ✅ Configuración de Hibernate para auto-crear la base de datos
-- ✅ El proyecto funciona en cualquier computador con PostgreSQL instalado
-- ✅ Solo necesitas configurar las credenciales en `application.properties`
-
-## 🏗️ Arquitectura
 
 El proyecto sigue una arquitectura en capas:
 
