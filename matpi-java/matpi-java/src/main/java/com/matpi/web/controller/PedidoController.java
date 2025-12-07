@@ -3,12 +3,15 @@ package com.matpi.web.controller;
 import com.matpi.dominio.dto.PedidoDto;
 import com.matpi.dominio.dto.PedidoProductoDto;
 import com.matpi.dominio.servicios.PedidoService;
+import com.matpi.dominio.servicios.ProductoService;
+import com.matpi.dominio.servicios.ReservaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +22,12 @@ public class PedidoController {
 
     @Autowired
     private PedidoService pedidoService;
+
+    @Autowired
+    private ProductoService productoService;
+
+    @Autowired
+    private ReservaService reservaService;
 
     @GetMapping
     public String getAll(
@@ -52,8 +61,15 @@ public class PedidoController {
     }
 
     @GetMapping("/create")
-    public String showCreateForm(Model model) {
+    public String showCreateForm(Model model, Principal principal) {
         model.addAttribute("activeModule", "pedidos");
+        model.addAttribute("productos", productoService.getAll());
+        model.addAttribute("reservas", reservaService.getAll());
+
+        if (principal != null) {
+            model.addAttribute("currentEmpleadoId", principal.getName());
+        }
+
         return "pedido-crear";
     }
 
@@ -89,6 +105,8 @@ public class PedidoController {
         } catch (Exception e) {
             model.addAttribute("error", "Error al crear pedido: " + e.getMessage());
             model.addAttribute("activeModule", "pedidos");
+            model.addAttribute("productos", productoService.getAll());
+            model.addAttribute("reservas", reservaService.getAll());
             return "pedido-crear";
         }
     }
