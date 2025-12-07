@@ -1,141 +1,235 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-            <div class="col text-end">
-                <a href="/pedidos" class="btn btn-secondary">
-                    <i class="bi bi-arrow-left"></i> Volver
-                </a>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Pedido - Matpi</title>
+
+    <link rel="icon" th:href="@{/img/Favicon.png}" />
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/cssDashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/dropdown.css}">
+    <link rel="stylesheet" th:href="@{/css/form.css}">
+</head>
+
+<body>
+
+    <div th:replace="fragments/header :: header(${activeModule})"></div>
+
+    <main>
+        <div class="formulario-seccion">
+            <div class="header-section">
+                <h1>➕ Crear Nuevo Pedido</h1>
+                <a th:href="@{/pedidos}" class="btn btn-secondary">← Volver</a>
             </div>
-        </div>
 
-        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="bi bi-exclamation-triangle"></i> <span th:text="${error}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+            <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
 
-        <form action="/pedidos/create" method="post" id="pedidoForm">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <h5 class="mb-0">Información del Pedido</h5>
+            <form th:action="@{/pedidos/create}" method="post" id="pedidoForm">
+                <div class="form-grid">
+                    <!-- Columna izquierda: Información del Pedido -->
+                    <div class="form-column">
+                        <h3>Información del Pedido</h3>
+                        
+                        <div class="form-group">
+                            <label for="mesa">Mesa</label>
+                            <input type="text" id="mesa" name="mesa" class="form-control" placeholder="Ej: Mesa 5">
                         </div>
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <label for="mesa" class="form-label">Mesa</label>
-                                <input type="text" class="form-control" id="mesa" name="mesa" placeholder="Ej: Mesa 5">
-                            </div>
 
-                            <div class="mb-3">
-                                <label for="numeroPersonas" class="form-label">Número de Personas</label>
-                                <input type="number" class="form-control" id="numeroPersonas" name="numeroPersonas" min="1" max="20">
-                            </div>
+                        <div class="form-group">
+                            <label for="numeroPersonas">Número de Personas</label>
+                            <input type="number" id="numeroPersonas" name="numeroPersonas" class="form-control" min="1" max="20">
+                        </div>
 
-                            <div class="mb-3">
-                                <label for="estado" class="form-label">Estado <span class="text-danger">*</span></label>
-                                <select class="form-select" id="estado" name="estado" required>
-                                    <option value="">Seleccione...</option>
-                                    <option value="Pendiente" selected>Pendiente</option>
-                                    <option value="En Preparación">En Preparación</option>
-                                    <option value="Entregado">Entregado</option>
-                                    <option value="Pagado">Pagado</option>
-                                    <option value="Cancelado">Cancelado</option>
-                                </select>
-                            </div>
+                        <div class="form-group">
+                            <label for="estado">Estado <span class="required">*</span></label>
+                            <select id="estado" name="estado" class="form-control" required>
+                                <option value="">Seleccione...</option>
+                                <option value="Pendiente" selected>Pendiente</option>
+                                <option value="En Preparación">En Preparación</option>
+                                <option value="Entregado">Entregado</option>
+                                <option value="Pagado">Pagado</option>
+                                <option value="Cancelado">Cancelado</option>
+                            </select>
+                        </div>
 
-                            <div class="mb-3">
-                                <label for="idCliente" class="form-label">ID Cliente</label>
-                                <input type="text" class="form-control" id="idCliente" name="idCliente" placeholder="Opcional">
-                            </div>
+                        <div class="form-group">
+                            <label for="idCliente">ID Cliente</label>
+                            <input type="text" id="idCliente" name="idCliente" class="form-control" placeholder="Opcional">
+                        </div>
 
-                            <div class="mb-3">
-                                <label for="idEmpleado" class="form-label">ID Empleado <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="idEmpleado" name="idEmpleado" required>
-                            </div>
+                        <div class="form-group">
+                            <label for="idEmpleado">ID Empleado <span class="required">*</span></label>
+                            <input type="text" id="idEmpleado" name="idEmpleado" class="form-control" required>
+                        </div>
 
-                            <div class="mb-3">
-                                <label for="idReserva" class="form-label">ID Reserva</label>
-                                <input type="number" class="form-control" id="idReserva" name="idReserva" placeholder="Opcional">
-                            </div>
+                        <div class="form-group">
+                            <label for="idReserva">ID Reserva</label>
+                            <input type="number" id="idReserva" name="idReserva" class="form-control" placeholder="Opcional">
                         </div>
                     </div>
-                </div>
 
-                <div class="col-md-6">
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <h5 class="mb-0">Productos del Pedido</h5>
-                        </div>
-                        <div class="card-body">
-                            <div id="productosContainer">
-                                <div class="producto-item mb-3 p-3 border rounded">
-                                    <div class="row">
-                                        <div class="col-md-6 mb-2">
-                                            <label class="form-label">Producto ID <span class="text-danger">*</span></label>
-                                            <input type="number" class="form-control producto-id" name="productos[0].productoId" required>
-                                        </div>
-                                        <div class="col-md-4 mb-2">
-                                            <label class="form-label">Cantidad <span class="text-danger">*</span></label>
-                                            <input type="number" class="form-control producto-cantidad" name="productos[0].cantidad" min="1" value="1" required>
-                                        </div>
-                                        <div class="col-md-2 mb-2 d-flex align-items-end">
-                                            <button type="button" class="btn btn-danger btn-sm w-100 remove-producto" disabled>
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </div>
+                    <!-- Columna derecha: Productos -->
+                    <div class="form-column">
+                        <h3>Productos del Pedido</h3>
+                        
+                        <div id="productosContainer">
+                            <div class="producto-item">
+                                <div class="producto-row">
+                                    <div class="form-group">
+                                        <label>Producto ID <span class="required">*</span></label>
+                                        <input type="number" class="form-control producto-id" name="productos[0].productoId" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Cantidad <span class="required">*</span></label>
+                                        <input type="number" class="form-control producto-cantidad" name="productos[0].cantidad" min="1" value="1" required>
+                                    </div>
+                                    <div class="form-group-btn">
+                                        <button type="button" class="btn-eliminar remove-producto" disabled>🗑️</button>
                                     </div>
                                 </div>
                             </div>
-                            <button type="button" class="btn btn-success btn-sm w-100" id="addProducto">
-                                <i class="bi bi-plus"></i> Agregar Producto
-                            </button>
                         </div>
-                    </div>
+                        
+                        <button type="button" class="btn btn-success" id="addProducto">➕ Agregar Producto</button>
 
-                    <div class="card">
-                        <div class="card-body">
-                            <h5>Valor Total</h5>
-                            <p class="text-muted">El valor total se calculará automáticamente en el servidor</p>
+                        <div class="info-box">
+                            <h4>Valor Total</h4>
+                            <p>El valor total se calculará automáticamente en el servidor</p>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="row mt-3">
-                <div class="col">
-                    <button type="submit" class="btn btn-primary btn-lg">
-                        <i class="bi bi-save"></i> Crear Pedido
-                    </button>
-                    <a href="/pedidos" class="btn btn-secondary btn-lg">
-                        <i class="bi bi-x-circle"></i> Cancelar
-                    </a>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">💾 Crear Pedido</button>
+                    <a th:href="@{/pedidos}" class="btn btn-secondary">❌ Cancelar</a>
                 </div>
-            </div>
-        </form>
-    </div>
+            </form>
+        </div>
+    </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <footer>
+        <p>© 2025 Matpi. Todos los derechos reservados.</p>
+        <ul class="footer-links">
+            <li><a href="#">Política de privacidad</a></li>
+            <li><a href="#">Términos de uso</a></li>
+        </ul>
+    </footer>
+
+    <style>
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .form-column {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .form-column h3 {
+            margin: 0 0 20px 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .producto-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border: 1px solid #dee2e6;
+        }
+
+        .producto-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 10px;
+            align-items: end;
+        }
+
+        .form-group-btn {
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .info-box h4 {
+            margin: 0 0 5px 0;
+            color: #1976d2;
+        }
+
+        .info-box p {
+            margin: 0;
+            color: #555;
+            font-size: 0.9em;
+        }
+
+        .btn-success {
+            width: 100%;
+            background-color: #28a745;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .producto-row {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group-btn {
+                justify-content: flex-start;
+            }
+        }
+    </style>
+
     <script>
         let productoIndex = 1;
 
         document.getElementById('addProducto').addEventListener('click', function() {
             const container = document.getElementById('productosContainer');
             const newProducto = document.createElement('div');
-            newProducto.className = 'producto-item mb-3 p-3 border rounded';
+            newProducto.className = 'producto-item';
             newProducto.innerHTML = `
-                <div class="row">
-                    <div class="col-md-6 mb-2">
-                        <label class="form-label">Producto ID <span class="text-danger">*</span></label>
+                <div class="producto-row">
+                    <div class="form-group">
+                        <label>Producto ID <span class="required">*</span></label>
                         <input type="number" class="form-control producto-id" name="productos[${productoIndex}].productoId" required>
                     </div>
-                    <div class="col-md-4 mb-2">
-                        <label class="form-label">Cantidad <span class="text-danger">*</span></label>
+                    <div class="form-group">
+                        <label>Cantidad <span class="required">*</span></label>
                         <input type="number" class="form-control producto-cantidad" name="productos[${productoIndex}].cantidad" min="1" value="1" required>
                     </div>
-                    <div class="col-md-2 mb-2 d-flex align-items-end">
-                        <button type="button" class="btn btn-danger btn-sm w-100 remove-producto">
-                            <i class="bi bi-trash"></i>
-                        </button>
+                    <div class="form-group-btn">
+                        <button type="button" class="btn-eliminar remove-producto">🗑️</button>
                     </div>
                 </div>
             `;
@@ -145,10 +239,9 @@
         });
 
         document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('remove-producto') || e.target.closest('.remove-producto')) {
-                const button = e.target.closest('.remove-producto');
-                if (!button.disabled) {
-                    button.closest('.producto-item').remove();
+            if (e.target.classList.contains('remove-producto')) {
+                if (!e.target.disabled) {
+                    e.target.closest('.producto-item').remove();
                     updateRemoveButtons();
                 }
             }
@@ -158,9 +251,13 @@
             const items = document.querySelectorAll('.producto-item');
             items.forEach(item => {
                 const btn = item.querySelector('.remove-producto');
-                btn.disabled = items.length === 1;
+                if (btn) {
+                    btn.disabled = items.length === 1;
+                }
             });
         }
     </script>
+
 </body>
+
 </html>
